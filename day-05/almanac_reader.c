@@ -22,7 +22,7 @@ int main(void)
     long i, j;
     long min_location_seed, min_location;
 
-    data = load_data(&doc_lines, "example.txt");
+    data = load_data(&doc_lines, "input.txt");
     if (!data)
     {
         printf("NO DATA\n");
@@ -187,11 +187,10 @@ long get_param(char ***data, int lines, long compare_value, char *first_identifi
 {
     long i, j;
     int start_of_data;
-    long second_start, first_start, data_range;
-    long value_soil, value_seed;
+    long first_start, data_range;
+    long value_soil;
 
     start_of_data = -1;
-    second_start = -1;
     first_start = -1;
     data_range = -1;
     for (i = 2; i < lines; i++)
@@ -210,18 +209,14 @@ long get_param(char ***data, int lines, long compare_value, char *first_identifi
         else
         {
             first_start = strtol(data[i][1], NULL, 0);            
-            second_start = strtol(data[i][0], NULL, 0);            
             data_range = strtol(data[i][2], NULL, 0);            
             
-            for (j = 0; j < data_range; j++)
+            if (compare_value >= first_start && compare_value <= first_start + data_range)
             {
-                value_seed = first_start + j;
-                value_soil = second_start + j;
-                /*
-                printf("%s = %li : %s = %li ; searching %s = %li\n", first_identifier, value_seed, second_identifier, value_soil, first_identifier, compare_value);
-                */
-                if (value_seed == compare_value)
-                    return(value_soil);
+                /* value searched exists in the given range */
+                j = compare_value - first_start;
+                value_soil = strtol(data[i][0], NULL, 0) + j;
+                return(value_soil);
             }
         }
     }

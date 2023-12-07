@@ -17,11 +17,12 @@ int main(void)
     char ***data;
     long *seeds;
     long *locations;
-    long min_location;
+    long new_location;
     int doc_lines;
-    int i;
+    long i, j;
+    long min_location_seed, min_location;
 
-    data = load_data(&doc_lines, "input.txt");
+    data = load_data(&doc_lines, "example.txt");
     if (!data)
     {
         printf("NO DATA\n");
@@ -49,7 +50,31 @@ int main(void)
         else
             break;
     
-    printf("Minimum location: %li of seed: %li\n", locations[min_location], seeds[min_location]);
+    printf("First part minimum location: %li of seed: %li\n", locations[min_location], seeds[min_location]);
+
+    /* Second part */
+    min_location_seed = 0;
+    min_location = 90000000;
+    for (i = 0; i < LINE_WORDS; i = i + 2)
+        if (seeds[i] > 0)
+        {
+            for (j = 0; j < seeds[i+1]; j++)
+            {
+                new_location = get_location(data, doc_lines, seeds[i] + j);
+                /*
+                printf("seed %li location %li\n", seeds[i] + j, new_location);
+                */
+                if (new_location < min_location && new_location != 0)
+                {
+                    min_location = new_location;
+                    min_location_seed = seeds[i] + j;
+                }
+            }
+        }
+        else
+            break;
+
+    printf("Second part minimum location: %li of seed: %li\n", min_location, min_location_seed);
 
     return(0);
 }
